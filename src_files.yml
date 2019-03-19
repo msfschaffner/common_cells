@@ -29,6 +29,7 @@ common_cells_all:
     - src/fifo_v2.sv
     - src/id_queue.sv
     - src/rrarbiter.sv
+    - src/prioarbiter.sv
     - src/rstgen.sv
     - src/stream_delay.sv
     # Level 2

@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - Add priority arbiter implementation
+- Add `$onehot0` assertion in one-hot to bin
 
 ## 1.11.0 - 2019-03-20
 
@@ -24,7 +25,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 - `sync_wedge` use existing synchronizer. This defines a single place where a tech-specific synchronizer can be defined.
-- Add `$onehot0` assertion in one-hot to bin
 
 ### Fixed
 - Fix FIFO push and pop signals in `stream_register` to observe interface prerequisites.

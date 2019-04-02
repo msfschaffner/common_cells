@@ -23,10 +23,10 @@ module plru_tree #(
   output logic [ENTRIES-1:0] plru_o  // element i is the least recently used (one hot)
 );
 
-    logic [2*(ENTRIES-1)-1:0] plru_tree_q, plru_tree_n;
+    logic [2*(ENTRIES-1)-1:0] plru_tree_q, plru_tree_d;
 
     always_comb begin : plru_replacement
-        plru_tree_n = plru_tree_q;
+        plru_tree_d = plru_tree_q;
         // The PLRU-tree indexing:
         // lvl0        0
         //            / \
@@ -40,14 +40,14 @@ module plru_tree #(
         // E.g. for a TLB with 8 entries, the for-loop is semantically
         // equivalent to the following pseudo-code:
         // unique case (1'b1)
-        // used_i[7]: plru_tree_n[0, 2, 6] = {1, 1, 1};
-        // used_i[6]: plru_tree_n[0, 2, 6] = {1, 1, 0};
-        // used_i[5]: plru_tree_n[0, 2, 5] = {1, 0, 1};
-        // used_i[4]: plru_tree_n[0, 2, 5] = {1, 0, 0};
-        // used_i[3]: plru_tree_n[0, 1, 4] = {0, 1, 1};
-        // used_i[2]: plru_tree_n[0, 1, 4] = {0, 1, 0};
-        // used_i[1]: plru_tree_n[0, 1, 3] = {0, 0, 1};
-        // used_i[0]: plru_tree_n[0, 1, 3] = {0, 0, 0};
+        // used_i[7]: plru_tree_d[0, 2, 6] = {1, 1, 1};
+        // used_i[6]: plru_tree_d[0, 2, 6] = {1, 1, 0};
+        // used_i[5]: plru_tree_d[0, 2, 5] = {1, 0, 1};
+        // used_i[4]: plru_tree_d[0, 2, 5] = {1, 0, 0};
+        // used_i[3]: plru_tree_d[0, 1, 4] = {0, 1, 1};
+        // used_i[2]: plru_tree_d[0, 1, 4] = {0, 1, 0};
+        // used_i[1]: plru_tree_d[0, 1, 3] = {0, 0, 1};
+        // used_i[0]: plru_tree_d[0, 1, 3] = {0, 0, 0};
         // default: begin /* No hit */ end
         // endcase
         for (int unsigned i = 0; i < ENTRIES; i++) begin
@@ -61,7 +61,7 @@ module plru_tree #(
                   shift = $clog2(ENTRIES) - lvl;
                   // to circumvent the 32 bit integer arithmetic assignment
                   new_index =  ~((i >> (shift-1)) & 32'b1);
-                  plru_tree_n[idx_base + (i >> shift)] = new_index[0];
+                  plru_tree_d[idx_base + (i >> shift)] = new_index[0];
                 end
             end
         end
@@ -103,7 +103,7 @@ module plru_tree #(
         if (!rst_ni) begin
             plru_tree_q <= '0;
         end else begin
-            plru_tree_q <= plru_tree_n;
+            plru_tree_q <= plru_tree_d;
         end
     end
 endmodule

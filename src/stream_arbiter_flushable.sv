@@ -69,6 +69,14 @@ module stream_arbiter_flushable #(
       .vld_o    (),
       .idx_o    (idx)
     );
+  end else begin
+    // pragma translate_off
+    `ifndef VERILATOR
+    initial begin
+      $fatal(1, "Entries must be a power of two");
+    end
+    `endif
+    // pragma translate_on
   end
 
   assign oup_valid_o = (|inp_valid_i); // (1), see reference above.

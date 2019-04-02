@@ -10,7 +10,9 @@
 //
 // Author: Florian Zaruba <zarubaf@iis.ee.ethz.ch>, ETH Zurich
 // Date: 16.03.2019
-// Description: Priority arbiter with Lock in
+// Description: Priority arbiter with Lock in. Port 0 has priority over port 1, port 1 over port2
+//              and so on. If the `LOCK_IN` feature is activated the arbitration decision is kept
+//              when the `en_i` is low.
 
 // Dependencies: relies on fast leading zero counter tree "onehot_to_bin" in common_cells
 module prioarbiter #(

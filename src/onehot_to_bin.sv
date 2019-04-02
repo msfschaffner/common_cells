@@ -13,7 +13,7 @@
 module onehot_to_bin #(
     parameter int unsigned ONEHOT_WIDTH = 16,
     // Do Not Change
-    localparam int unsigned BIN_WIDTH   = $clog2(ONEHOT_WIDTH)
+    parameter int unsigned BIN_WIDTH   = $clog2(ONEHOT_WIDTH)
 )(
     input  logic [ONEHOT_WIDTH-1:0] onehot,
     output logic [BIN_WIDTH-1:0]    bin

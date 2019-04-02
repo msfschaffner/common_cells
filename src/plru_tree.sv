@@ -23,6 +23,8 @@ module plru_tree #(
   output logic [ENTRIES-1:0] plru_o  // element i is the least recently used (one hot)
 );
 
+    localparam LOG_ENTRIES = $clog2(ENTRIES);
+
     logic [2*(ENTRIES-1)-1:0] plru_tree_q, plru_tree_d;
 
     always_comb begin : plru_replacement
@@ -55,10 +57,10 @@ module plru_tree #(
             // we got a hit so update the pointer as it was least recently used
             if (used_i[i]) begin
                 // Set the nodes to the values we would expect
-                for (int unsigned lvl = 0; lvl < $clog2(ENTRIES); lvl++) begin
+                for (int unsigned lvl = 0; lvl < LOG_ENTRIES; lvl++) begin
                   idx_base = $unsigned((2**lvl)-1);
                   // lvl0 <=> MSB, lvl1 <=> MSB-1, ...
-                  shift = $clog2(ENTRIES) - lvl;
+                  shift = LOG_ENTRIES - lvl;
                   // to circumvent the 32 bit integer arithmetic assignment
                   new_index =  ~((i >> (shift-1)) & 32'b1);
                   plru_tree_d[idx_base + (i >> shift)] = new_index[0];
@@ -83,10 +85,10 @@ module plru_tree #(
             automatic logic en;
             automatic int unsigned idx_base, shift, new_index;
             en = 1'b1;
-            for (int unsigned lvl = 0; lvl < $clog2(ENTRIES); lvl++) begin
+            for (int unsigned lvl = 0; lvl < LOG_ENTRIES; lvl++) begin
                 idx_base = $unsigned((2**lvl)-1);
                 // lvl0 <=> MSB, lvl1 <=> MSB-1, ...
-                shift = $clog2(ENTRIES) - lvl;
+                shift = LOG_ENTRIES - lvl;
                 // en &= plru_tree_q[idx_base + (i>>shift)] == ((i >> (shift-1)) & 1'b1);
                 new_index =  (i >> (shift-1)) & 32'b1;
                 if (new_index[0]) begin
@@ -106,4 +108,13 @@ module plru_tree #(
             plru_tree_q <= plru_tree_d;
         end
     end
+
+// pragma translate_off
+`ifndef VERILATOR
+    initial begin
+        assert (ENTRIES == 2**LOG_ENTRIES) else $error("Entries must be a power of two");
+    end
+`endif
+// pragma translate_on
+
 endmodule

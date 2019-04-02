@@ -44,7 +44,7 @@ module prioarbiter #(
   // Port 0 has priority over all other ports
   assign ack_o[0] = (req_i[0]) ? en_i : 1'b0;
   // check that the priorities
-  for (genvar i = 1; i < NUM_REQ; i++) begin : arb_req_ports
+  for (genvar i = 1; i < NUM_REQ; i++) begin : gen_arb_req_ports
       // for every subsequent port check the priorities of the previous port
       assign ack_o[i] = (req_i[i] & ~(|ack_o[i-1:0])) ? en_i : 1'b0;
   end
@@ -56,7 +56,7 @@ module prioarbiter #(
     .bin    ( idx   )
   );
 
-  if (LOCK_IN) begin : g_lock_in
+  if (LOCK_IN) begin : gen_lock_in
     // latch decision in case we got at least one req and no acknowledge
     assign lock_d         = (|req_i) & ~en_i;
     assign arb_sel_lock_d = idx_o;
